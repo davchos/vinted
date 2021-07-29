@@ -227,38 +227,36 @@ router.get("/offers", async (req, res) => {
   const sort = req.query.sort ? req.query.sort.replace("price-", "") : "desc";
 
   let query = {};
-  // a revoir
+  console.log(req.query);
+
   if (title) {
     query.product_name = new RegExp(title, "i");
   }
   if (priceMin) {
-    query.product_price = { $gte: Number(priceMin) };
+    query.product_price = { $gte: priceMin };
+  }
+
+  if (query.product_price) {
+    query.product_price.$lte = priceMax;
+  } else if (priceMax) {
+    query.product_price = { $lte: priceMax };
   }
   console.log(query);
-  // rajouter une key a query
-  if (query["product_price"]) {
-    query.product_price.$lte = Number(priceMax);
-  } else if (priceMax) {
-    query.product_price = { $lte: Number(priceMax) };
-  }
 
   try {
     let result = await Offer.find(query)
-      // .sort({
-      //   product_price: sort,
-      // })
+      .sort({
+        product_price: sort,
+      })
       .populate("owner", "account")
       .skip(page * offrePerPage)
       .limit(offrePerPage);
-
+    // console.log(result);
     let count = await Offer.find(query)
-      // .sort({
-      //   product_price: sort,
-      // })
       .populate("owner", "account")
       .countDocuments();
 
-    console.log(result);
+    console.log(await Offer.count(query));
     return res.status(200).json({
       count: count,
       offers: result,
