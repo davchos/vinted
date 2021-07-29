@@ -49,19 +49,19 @@ router.post("/user/signup", async (req, res) => {
         salt: salt,
       });
       let resultat = await newUser.save();
-      //console.log(typeof req.files);
-      // if (req.files) {
-      //   console.log(req.files);
-      //   //console.log(req.files.picture.path);
-      //   const resultUpload = await cloudinary.uploader.upload(
-      //     req.files.picture.path,
-      //     {
-      //       folder: `/vinted/user/${resultat._id}`,
-      //     }
-      //   );
-      //   //console.log(resultUpload.secure_url);
-      //   resultat.account.avatar = resultUpload.secure_url;
-      // }
+      console.log(typeof req.files);
+      if (req.files.length > 0) {
+        console.log(req.files);
+        //console.log(req.files.picture.path);
+        const resultUpload = await cloudinary.uploader.upload(
+          req.files.picture.path,
+          {
+            folder: `/vinted/user/${resultat._id}`,
+          }
+        );
+        //console.log(resultUpload.secure_url);
+        resultat.account.avatar = resultUpload.secure_url;
+      }
 
       resultat = await newUser.save();
       //console.group(resultat);
