@@ -234,27 +234,27 @@ router.get("/offers", async (req, res) => {
   if (priceMin) {
     query.product_price = { $gte: Number(priceMin) };
   }
-
+  console.log(query);
   // rajouter une key a query
   if (query["product_price"]) {
     query.product_price.$lte = Number(priceMax);
-  } else {
+  } else if (priceMax) {
     query.product_price = { $lte: Number(priceMax) };
   }
 
   try {
     let result = await Offer.find(query)
-      .sort({
-        product_price: sort,
-      })
+      // .sort({
+      //   product_price: sort,
+      // })
       .populate("owner", "account")
       .skip(page * offrePerPage)
       .limit(offrePerPage);
 
     let count = await Offer.find(query)
-      .sort({
-        product_price: sort,
-      })
+      // .sort({
+      //   product_price: sort,
+      // })
       .populate("owner", "account")
       .countDocuments();
 
@@ -272,11 +272,6 @@ router.get("/offer/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const offer = await Offer.findById(id).populate("owner", "account");
-
-    // populate({
-    //path: "owner",
-    //select: "account",
-    //})
 
     if (offer) {
       res.status(200).json(offer);
