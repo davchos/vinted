@@ -21,7 +21,8 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
     { EMPLACEMENT: req.fields.city },
     { COLOR: req.fields.color },
   ];
-  const product_image = {};
+  const product_image = [];
+  //const product_image = {};
   if (
     product_description.length > 500 ||
     product_name.length > 50 ||
@@ -68,9 +69,10 @@ router.post("/offer/publish", isAuthenticated, async (req, res) => {
               folder: `/vinted/offer/${tmp._id}`,
             }
           );
-          product_image[fileKey] = resultUpload.secure_url;
+          //product_image[fileKey] = resultUpload.secure_url;
+          product_image.push(resultUpload);
 
-          if (Object.keys(product_image).length === fileKeys.length) {
+          if (product_image.length === fileKeys.length) {
             // tous les uploads sont terminés, on peut donc envoyer la réponse au client
             tmp.product_image = product_image;
             await tmp.save();
